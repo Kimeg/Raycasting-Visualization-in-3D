@@ -1,9 +1,13 @@
 import pygame as pg
 import numpy as np
+import math
 
 class Source:
-    def __init__(self, x, y):
+    def __init__(self, x, y, distortion_angle):
         self.pos = Point(x, y)
+        self.distortion_angle = distortion_angle
+
+        ''' list to store all light ray objects emerging from light source '''
         self.rays = []
         return
         
@@ -30,28 +34,27 @@ class Source:
             pg.draw.circle(screen, GREEN, (self.pos.x, self.pos.y), 10)
         return
 
-    ''' 3D Rendering of raycasting process '''
+    ''' 3D Rendering of ray-casting process '''
     ''' There are dozens of other ways to map 2D info to 3D, '''
     ''' which affects how the rendering process looks like to our eyes. '''
     ''' parameters i and distance refers to the index of a ray and its distance to the nearest wall '''
     ''' '''
     def draw3D(self, i, distance):
-        #d = d*np.cos(ray.angle)
 
         ''' width of rectangle being rendered in 3D '''
         dx = int(WIDTH/N)
 
         ''' height of rectangle being rendered in 3D '''
-        dy = int(HEIGHT-distance)
-            
-        ''' variable dependent on the height of the rectangle '''
-        ''' This value provides an effect in which wall's color being altered '''
-        ''' depending on the distance to the light source '''
-        c = int(dy*255/WIDTH)
         try:
-            pg.draw.rect(screen, (50, c, 50), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
+            dy = int(self.distortion_angle/distance)
         except:
-            pass
+            return 
+            
+        ''' color value provides an effect in which wall's color being altered '''
+        ''' depending on its distance to the light source '''
+        color = 255-map_value(distance)
+
+        pg.draw.rect(screen, (50, color, 50), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
         return
     
 class Point:
@@ -112,7 +115,7 @@ class Ray:
     def draw(self, ip):
         if (self.p1.x < WIDTH):
             pg.draw.line(screen, WHITE, (self.p1.x, self.p1.y), ip, 1)
-        #pg.draw.circle(screen, RED, ip, 3)
+        pg.draw.circle(screen, RED, ip, 3)
         return
         
 class Wall:
@@ -122,7 +125,6 @@ class Wall:
         return
         
     def draw(self):
-        #pg.draw.circle(screen, BLUE, (WIDTH/2, HEIGHT/2), 10)
         pg.draw.line(screen, BLUE, (self.p1.x, self.p1.y), (self.p2.x, self.p2.y), 1)
         return
 
@@ -146,18 +148,29 @@ def draw(o, walls):
         wall.draw()
     return
 
+def map_value(value):
+    _max = np.sqrt((WIDTH/2.)**2 + HEIGHT**2)
+    _min = 0 
+
+    M = 255.
+    m = 0.
+
+    scaler = (M-m)/(_max-_min)
+    return (value-_min)*(scaler)+m
+
 def main():
-    ''' The light source casting rays within specified fov range ''' 
-    o = Source(int(WIDTH/2), int(HEIGHT/2))
-    o.generate_rays()
+    ''' The light source casting rays within specified field of view range ''' 
+    source = Source(int(WIDTH/2), int(HEIGHT/2), distortion_angle)
+    source.generate_rays()
+
+
+    ''' Generate walls which "blocks" the light rays thus providing what we perceive as shade effects '''
     walls = make_walls()
     
-    delay = 100000
-    run = True
-    while run:
-        draw(o, walls)
+    while True:
+        draw(source, walls)
         
-        angle = 0
+        source_angle = 0
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
@@ -169,28 +182,30 @@ def main():
         ''' Press X to quit '''
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
-            angle = -5
+            source_angle = -5
         elif keys[pg.K_d]:
-            angle = 5
+            source_angle = 5
         elif keys[pg.K_r]:
-            o = Source(int(WIDTH/2), int(HEIGHT/2))
-            o.generate_rays()
+            source = Source(int(WIDTH/2), int(HEIGHT/2))
+            source.generate_rays()
             walls = make_walls()
         elif keys[pg.K_x]:
             break
 
         ''' Update all ray and wall objects '''
-        for i, ray in enumerate(o.rays):
-            ray.rotate(angle)
+        for i, ray in enumerate(source.rays):
+            ray.rotate(source_angle)
             closest = None
             record = 99999
 
             ''' Calculate the distance between the given ray and walls, store the closest one '''
             for wall in walls:
+
+                ''' calculate intersection point between ray and wall '''
                 ip = ray.intersection(wall)
                 
                 if not ip == None:
-                    d = o.dist(ip) 
+                    d = source.dist(ip) 
                     if d < record:
                         record = d
                         closest = ip
@@ -200,42 +215,56 @@ def main():
             ''' Render this information on a pseudo-3D space '''
             if not closest == None:
                 ray.draw(closest)
-                o.draw3D(i, record)
+                source.draw3D(i, record)
                
         ''' Update the position of the light source ''' 
-        o.move(mx, my)
+        source.move(mx, my)
 
+
+        ''' Render all pygame objects in current frame '''
         pg.display.flip()
+
     pg.quit()                   
     return
 
 if __name__=="__main__":
     ''' Below are parameter configurations; feel free to play with them! '''
 
-    ''' field of view angle (0 ~ 360) '''
-    FOV = 45 
-
     ''' number of rays being emitted from the source light (this value must be less than FOV) '''
+    ''' This value has to do with how "smooth" the walls look like '''
     N = 45 
 
-    ''' dimensions of the 2D raycasting window '''
-    WIDTH = 600
-    HEIGHT = 600
 
-    ''' dimensions of the entire screen '''
+    ''' dimensions of the 2D ray-casting window '''
+    WIDTH = 400
+    HEIGHT = 400
+
+
+    ''' horizontal length of the entire screen, which includes 3D ray-casting window '''
     SWIDTH = 2*WIDTH
+
 
     ''' number of walls '''
     nWalls = 10 
 
 
+    ''' field of view angle (0 ~ 360) '''
+    FOV = 45 
+
+
+    ''' parameter to tweak 3D view experience '''
+    distortion_angle = N*WIDTH/(math.tan(math.pi/4))
+
+
+    ''' Colors in RGB format '''
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     GREEN = (0,255,0)
     BLUE = (0,128,255)
     RED = (255, 0, 0)
 
-    ''' Initialize pygame session and its configurations '''
+
+    ''' Initialize pygame session and configure settings '''
     pg.init()
 
     screen = pg.display.set_mode((SWIDTH, HEIGHT))
