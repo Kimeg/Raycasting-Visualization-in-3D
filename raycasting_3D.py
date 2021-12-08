@@ -7,7 +7,7 @@ class Source:
     def __init__(self, x, y):
         self.pos = Point(x, y)
         self.angle = np.random.randint(0, 360)
-        self.view_mode = random.choice(range(len(VIEW_MODES)))
+        self.view_mode = 0 
 
         ''' list to store all light ray objects emerging from light source '''
         self.rays = []
@@ -166,10 +166,13 @@ def draw(source, walls):
     source.draw()
     for wall in walls:
         wall.draw()
+
+    pg.draw.rect(screen, BLUE, (WIDTH, 0, WIDTH, int(HEIGHT/2)))
+    pg.draw.rect(screen, GREEN, (WIDTH, int(HEIGHT/2), WIDTH, int(HEIGHT/2)))
     return
 
 def map_value(value):
-    _max = np.sqrt((WIDTH/2.)**2 + HEIGHT**2)
+    _max = np.sqrt(WIDTH**2 + HEIGHT**2)
     _min = 0 
 
     M = 255.
@@ -195,6 +198,7 @@ def main():
             if event.type == pg.QUIT:
                 run = False
 
+            ''' Click left mouse button to change pseudo-3D view mode '''
             if event.type == pg.MOUSEBUTTONDOWN:
                 if not clicked:
                     source.view_mode = (source.view_mode+1)%len(VIEW_MODES)
@@ -278,7 +282,7 @@ if __name__=="__main__":
 
 
     ''' number of walls '''
-    nWalls = 10 
+    nWalls = 5 
 
 
     ''' light source rotation speed '''
@@ -286,21 +290,21 @@ if __name__=="__main__":
 
 
     ''' parameter to tweak 3D view experience '''
-    DISTORTION_ANGLE = N*WIDTH/(math.tan(math.pi/4))
+    DISTORTION_ANGLE = N*WIDTH/(math.tan(math.pi/6))
 
 
     ''' Various methods for pseudo-3D view perspective '''
     VIEW_MODES = [
-        'fisheye',
         'cosine',
-        'tangent'
+        'tangent',
+        'fisheye'
     ]
 
 
     ''' Colors in RGB format '''
     RED = (255, 0, 0)
     YELLOW = (253, 253, 150)
-    GREEN = (0,255,0)
+    GREEN = (0,155,0)
     BLUE = (0,128,255)
     PURPLE = (102, 51, 153)
     WHITE = (255, 255, 255)
