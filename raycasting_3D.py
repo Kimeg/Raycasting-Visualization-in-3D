@@ -3,9 +3,8 @@ import numpy as np
 import math
 
 class Source:
-    def __init__(self, x, y, distortion_angle):
+    def __init__(self, x, y):
         self.pos = Point(x, y)
-        self.distortion_angle = distortion_angle
 
         ''' list to store all light ray objects emerging from light source '''
         self.rays = []
@@ -40,21 +39,24 @@ class Source:
     ''' parameters i and distance refers to the index of a ray and its distance to the nearest wall '''
     ''' '''
     def draw3D(self, i, distance):
+        if distance==0:
+            return
 
         ''' width of rectangle being rendered in 3D '''
         dx = int(WIDTH/N)
 
         ''' height of rectangle being rendered in 3D '''
-        try:
-            dy = int(self.distortion_angle/distance)
-        except:
-            return 
+        dy = int(DISTORTION_ANGLE/distance)
             
         ''' color value provides an effect in which wall's color being altered '''
         ''' depending on its distance to the light source '''
         color = 255-map_value(distance)
 
-        pg.draw.rect(screen, (50, color, 50), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
+        try:
+            #pg.draw.rect(screen, (50, color, 50), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
+            pg.draw.rect(screen, (color, color, color), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
+        except:
+            pass
         return
     
 class Point:
@@ -129,21 +131,25 @@ class Wall:
         return
 
 def make_walls():
-    walls = []
-
     ''' Generate walls at random positions and angles '''
-    for i in range(nWalls):
-        walls.append(Wall(np.random.randint(10,WIDTH-10),np.random.randint(10,WIDTH-10), np.random.randint(10,WIDTH-10),np.random.randint(10,WIDTH-10)))
 
-    ''' Boundary walls '''
-    walls.append(Wall(-20,-20,-20,HEIGHT+20))
-    walls.append(Wall(-20,-20,WIDTH,-20))
-    walls.append(Wall(-20,HEIGHT+20,WIDTH,HEIGHT+20))
-    walls.append(Wall(WIDTH,-20,WIDTH,HEIGHT+20))
+    ''' (an arbitrary offset value was used to prevent walls from being generated at or outside of view range) '''
+    offset = 10
+
+    walls = [Wall(np.random.randint(offset,WIDTH-offset),np.random.randint(offset,HEIGHT-offset), np.random.randint(offset,WIDTH-offset),np.random.randint(offset,HEIGHT-offset)) for _ in range(nWalls)]
+
+
+    ''' Boundary walls (an arbitrary offset value was used to shift boundary walls towards outside of view ange)'''
+    offset = 20
+
+    walls.append(Wall(-offset,-offset,-offset,HEIGHT+offset))
+    walls.append(Wall(-offset,-offset,WIDTH,-offset))
+    walls.append(Wall(-offset,HEIGHT+offset,WIDTH,HEIGHT+offset))
+    walls.append(Wall(WIDTH,-offset,WIDTH,HEIGHT+offset))
     return walls
         
-def draw(o, walls):
-    o.draw()
+def draw(source, walls):
+    source.draw()
     for wall in walls:
         wall.draw()
     return
@@ -160,7 +166,7 @@ def map_value(value):
 
 def main():
     ''' The light source casting rays within specified field of view range ''' 
-    source = Source(int(WIDTH/2), int(HEIGHT/2), distortion_angle)
+    source = Source(int(WIDTH/2), int(HEIGHT/2))
     source.generate_rays()
 
 
@@ -182,9 +188,9 @@ def main():
         ''' Press X to quit '''
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
-            source_angle = -5
+            source_angle = -ROTATION_SPEED
         elif keys[pg.K_d]:
-            source_angle = 5
+            source_angle = ROTATION_SPEED
         elif keys[pg.K_r]:
             source = Source(int(WIDTH/2), int(HEIGHT/2))
             source.generate_rays()
@@ -236,8 +242,8 @@ if __name__=="__main__":
 
 
     ''' dimensions of the 2D ray-casting window '''
-    WIDTH = 400
-    HEIGHT = 400
+    WIDTH = 600
+    HEIGHT = 600
 
 
     ''' horizontal length of the entire screen, which includes 3D ray-casting window '''
@@ -252,8 +258,12 @@ if __name__=="__main__":
     FOV = 45 
 
 
+    ''' light source rotation speed '''
+    ROTATION_SPEED = 0.5 
+
+
     ''' parameter to tweak 3D view experience '''
-    distortion_angle = N*WIDTH/(math.tan(math.pi/4))
+    DISTORTION_ANGLE = N*WIDTH/(math.tan(math.pi/4))
 
 
     ''' Colors in RGB format '''
