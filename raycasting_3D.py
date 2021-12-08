@@ -1,18 +1,21 @@
 import pygame as pg
 import numpy as np
+import random
 import math
 
 class Source:
     def __init__(self, x, y):
         self.pos = Point(x, y)
+        self.angle = np.random.randint(0, 360)
+        self.view_mode = random.choice(range(len(VIEW_MODES)))
 
         ''' list to store all light ray objects emerging from light source '''
         self.rays = []
         return
         
     def generate_rays(self):
-        for i in range(0, FOV, int(FOV/N)):
-            angle = i * np.pi/180
+        for i in range(0, N):
+            angle = i*FOV/N * np.pi/180
             self.rays.append(Ray(self.pos.x, self.pos.y, angle))
         return
     
@@ -46,14 +49,18 @@ class Source:
         dx = int(WIDTH/N)
 
         ''' height of rectangle being rendered in 3D '''
-        dy = int(DISTORTION_ANGLE/distance)
-            
+        if VIEW_MODES[self.view_mode] == 'tangent':
+            dy = int(DISTORTION_ANGLE/distance)
+        elif VIEW_MODES[self.view_mode] == 'cosine':
+            dy = int((N*HEIGHT/distance)*math.cos(abs(i*(FOV/N)-FOV)*math.pi/180))
+        elif VIEW_MODES[self.view_mode] == 'fisheye':
+            dy = int(HEIGHT-distance)
+
         ''' color value provides an effect in which wall's color being altered '''
         ''' depending on its distance to the light source '''
         color = 255-map_value(distance)
 
         try:
-            #pg.draw.rect(screen, (50, color, 50), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
             pg.draw.rect(screen, (color, color, color), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
         except:
             pass
@@ -117,7 +124,7 @@ class Ray:
     def draw(self, ip):
         if (self.p1.x < WIDTH):
             pg.draw.line(screen, WHITE, (self.p1.x, self.p1.y), ip, 1)
-        pg.draw.circle(screen, RED, ip, 3)
+        pg.draw.circle(screen, YELLOW, ip, 3)
         return
         
 class Wall:
@@ -127,20 +134,27 @@ class Wall:
         return
         
     def draw(self):
-        pg.draw.line(screen, BLUE, (self.p1.x, self.p1.y), (self.p2.x, self.p2.y), 1)
+        pg.draw.line(screen, PURPLE, (self.p1.x, self.p1.y), (self.p2.x, self.p2.y), 3)
         return
 
 def make_walls():
     ''' Generate walls at random positions and angles '''
 
     ''' (an arbitrary offset value was used to prevent walls from being generated at or outside of view range) '''
-    offset = 10
+    offset = 20
 
-    walls = [Wall(np.random.randint(offset,WIDTH-offset),np.random.randint(offset,HEIGHT-offset), np.random.randint(offset,WIDTH-offset),np.random.randint(offset,HEIGHT-offset)) for _ in range(nWalls)]
-
+    walls = [
+        Wall(
+            np.random.randint(offset,WIDTH-offset), 
+            np.random.randint(offset,HEIGHT-offset), 
+            np.random.randint(offset,WIDTH-offset),  
+            np.random.randint(offset,HEIGHT-offset)  
+        ) 
+        for _ in range(nWalls)
+    ]
 
     ''' Boundary walls (an arbitrary offset value was used to shift boundary walls towards outside of view ange)'''
-    offset = 20
+    offset = -10
 
     walls.append(Wall(-offset,-offset,-offset,HEIGHT+offset))
     walls.append(Wall(-offset,-offset,WIDTH,-offset))
@@ -172,7 +186,7 @@ def main():
 
     ''' Generate walls which "blocks" the light rays thus providing what we perceive as shade effects '''
     walls = make_walls()
-    
+    clicked = False
     while True:
         draw(source, walls)
         
@@ -180,9 +194,17 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
-                    
+
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if not clicked:
+                    source.view_mode = (source.view_mode+1)%len(VIEW_MODES)
+                    clicked = True
+
+            if event.type == pg.MOUSEBUTTONUP:
+                    clicked = False 
+
             mx, my = pg.mouse.get_pos()
-            
+
         ''' Press A or D to rotate the light source '''
         ''' Press R to reset the environment '''
         ''' Press X to quit '''
@@ -199,6 +221,7 @@ def main():
             break
 
         ''' Update all ray and wall objects '''
+        source.angle += source_angle
         for i, ray in enumerate(source.rays):
             ray.rotate(source_angle)
             closest = None
@@ -236,14 +259,18 @@ def main():
 if __name__=="__main__":
     ''' Below are parameter configurations; feel free to play with them! '''
 
-    ''' number of rays being emitted from the source light (this value must be less than FOV) '''
+    ''' field of view angle (0 ~ 360) '''
+    FOV = 30 
+
+
+    ''' number of rays being emitted from the source light '''
     ''' This value has to do with how "smooth" the walls look like '''
-    N = 45 
+    N = 100
 
 
     ''' dimensions of the 2D ray-casting window '''
-    WIDTH = 600
-    HEIGHT = 600
+    WIDTH = 800
+    HEIGHT = 800
 
 
     ''' horizontal length of the entire screen, which includes 3D ray-casting window '''
@@ -254,24 +281,30 @@ if __name__=="__main__":
     nWalls = 10 
 
 
-    ''' field of view angle (0 ~ 360) '''
-    FOV = 45 
-
-
     ''' light source rotation speed '''
-    ROTATION_SPEED = 0.5 
+    ROTATION_SPEED = 1
 
 
     ''' parameter to tweak 3D view experience '''
     DISTORTION_ANGLE = N*WIDTH/(math.tan(math.pi/4))
 
 
+    ''' Various methods for pseudo-3D view perspective '''
+    VIEW_MODES = [
+        'fisheye',
+        'cosine',
+        'tangent'
+    ]
+
+
     ''' Colors in RGB format '''
-    WHITE = (255, 255, 255)
-    BLACK = (0, 0, 0)
+    RED = (255, 0, 0)
+    YELLOW = (253, 253, 150)
     GREEN = (0,255,0)
     BLUE = (0,128,255)
-    RED = (255, 0, 0)
+    PURPLE = (102, 51, 153)
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
 
 
     ''' Initialize pygame session and configure settings '''
