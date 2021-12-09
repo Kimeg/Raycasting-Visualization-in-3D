@@ -10,6 +10,6 @@
 > [2] Heuristic method used to map ray-casting phenomena into pseudo-3D perspective. 
 
 - Use mouse to move the light source around the screen (within the 2D section).
+- Use left mouse button to switch between different view modes (pseudo-3D perspectives).
 - Use A or D keys to rotate the light source.
 - Use X key to quit.
-
