@@ -137,7 +137,7 @@ class Wall:
         pg.draw.line(screen, PURPLE, (self.p1.x, self.p1.y), (self.p2.x, self.p2.y), 3)
         return
 
-def make_walls():
+def make_random_walls():
     ''' Generate walls at random positions and angles '''
 
     ''' (an arbitrary offset value was used to prevent walls from being generated at or outside of view range) '''
@@ -162,13 +162,40 @@ def make_walls():
     walls.append(Wall(WIDTH,-offset,WIDTH,HEIGHT+offset))
     return walls
         
+def make_rect_walls():
+    offset = 50
+    walls = []
+    for i in range(nWalls):
+        pivot = Point(np.random.randint(offset, WIDTH-offset), np.random.randint(offset, WIDTH-offset))
+
+        dx = np.random.randint(20, 40)
+        dy = np.random.randint(20, 40)
+
+        point_1 = Point(pivot.x, pivot.y)
+        point_2 = Point(pivot.x+dx, pivot.y)
+        point_3 = Point(pivot.x+dx, pivot.y+dy)
+        point_4 = Point(pivot.x, pivot.y+dy)
+
+        walls.append(Wall(point_1.x, point_1.y, point_2.x, point_2.y))
+        walls.append(Wall(point_2.x, point_2.y, point_3.x, point_3.y))
+        walls.append(Wall(point_3.x, point_3.y, point_4.x, point_4.y))
+        walls.append(Wall(point_4.x, point_4.y, point_1.x, point_1.y))
+
+    offset = -10
+
+    walls.append(Wall(-offset,-offset,-offset,HEIGHT+offset))
+    walls.append(Wall(-offset,-offset,WIDTH,-offset))
+    walls.append(Wall(-offset,HEIGHT+offset,WIDTH,HEIGHT+offset))
+    walls.append(Wall(WIDTH,-offset,WIDTH,HEIGHT+offset))
+    return walls
+
 def draw(source, walls):
     source.draw()
     for wall in walls:
         wall.draw()
 
     pg.draw.rect(screen, BLUE, (WIDTH, 0, WIDTH, int(HEIGHT/2)))
-    pg.draw.rect(screen, GREEN, (WIDTH, int(HEIGHT/2), WIDTH, int(HEIGHT/2)))
+    pg.draw.rect(screen, GREEN, (WIDTH, HEIGHT/2, WIDTH, int(HEIGHT/2)))
     return
 
 def map_value(value):
@@ -188,7 +215,15 @@ def main():
 
 
     ''' Generate walls which "blocks" the light rays thus providing what we perceive as shade effects '''
-    walls = make_walls()
+    ''' You can pick the wall type of your choice '''
+    wall_type = 'rect'
+
+    wall_generator = {
+        'rect': make_rect_walls,
+        'random': make_random_walls,
+    }
+    walls = wall_generator[wall_type]()
+
     clicked = False
     while True:
         draw(source, walls)
@@ -220,7 +255,7 @@ def main():
         elif keys[pg.K_r]:
             source = Source(int(WIDTH/2), int(HEIGHT/2))
             source.generate_rays()
-            walls = make_walls()
+            walls = wall_generator[wall_type]()
         elif keys[pg.K_x]:
             break
 
@@ -269,12 +304,12 @@ if __name__=="__main__":
 
     ''' number of rays being emitted from the source light '''
     ''' This value has to do with how "smooth" the walls look like '''
-    N = 100
+    N = 30
 
 
     ''' dimensions of the 2D ray-casting window '''
-    WIDTH = 800
-    HEIGHT = 800
+    WIDTH = 400
+    HEIGHT = 400
 
 
     ''' horizontal length of the entire screen, which includes 3D ray-casting window '''
@@ -282,7 +317,7 @@ if __name__=="__main__":
 
 
     ''' number of walls '''
-    nWalls = 5 
+    nWalls = 10
 
 
     ''' light source rotation speed '''
@@ -301,7 +336,7 @@ if __name__=="__main__":
     ]
 
 
-    ''' Colors in RGB format '''
+    ''' Colors in rectRGB format '''
     RED = (255, 0, 0)
     YELLOW = (253, 253, 150)
     GREEN = (0,155,0)
