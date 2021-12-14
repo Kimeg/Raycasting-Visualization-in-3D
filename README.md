@@ -14,7 +14,7 @@
 - Use A or D keys to rotate the light source.
 - Use X key to quit.
 
-![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/1.jpg?raw=true)
-![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/2.jpg?raw=true)
-![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/3.jpg?raw=true)
-![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/4.jpg?raw=true)
+![1](https://user-images.githubusercontent.com/26669345/146011467-e6681e62-68b4-455c-8acc-a1129a85a417.jpg)
+![2](https://user-images.githubusercontent.com/26669345/146011499-07d5ae63-4cbc-4ba3-905d-bd57c8b7b2a3.jpg)
+![3](https://user-images.githubusercontent.com/26669345/146011512-85e52ce0-5d70-4a5e-be9a-37e35045e6c5.jpg)
+![4](https://user-images.githubusercontent.com/26669345/146011515-046cfec4-4a5c-49ef-bdd2-90b82dd37926.jpg)
