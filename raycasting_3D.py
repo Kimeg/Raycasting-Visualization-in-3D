@@ -104,6 +104,6 @@ if __name__=="__main__":
 
     screen = pg.display.set_mode((SWIDTH, HEIGHT))
 
-    pg.display.set_caption('3D Ray Casting')
+    pg.display.set_caption('3D Ray Casting Renderer')
 
     main()

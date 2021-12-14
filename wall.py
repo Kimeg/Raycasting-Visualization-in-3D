@@ -11,5 +11,5 @@ class Wall:
         return
         
     def draw(self):
-        self.pg.draw.line(self.screen, PURPLE, (self.p1.x, self.p1.y), (self.p2.x, self.p2.y), 3)
+        self.pg.draw.line(self.screen, ORANGE, (self.p1.x, self.p1.y), (self.p2.x, self.p2.y), 3)
         return

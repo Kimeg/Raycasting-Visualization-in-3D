@@ -46,6 +46,7 @@ VIEW_MODES = [
 
 ''' Colors in rectRGB format '''
 RED = (255, 0, 0)
+ORANGE = (255,127,80)
 YELLOW = (253, 253, 150)
 GREEN = (0,155,0)
 BLUE = (0,128,255)
