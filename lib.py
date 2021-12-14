@@ -62,13 +62,13 @@ def make_rect_walls(pg, screen):
     walls.append(Wall(WIDTH,-offset,WIDTH,HEIGHT+offset, color, pg, screen))
     return walls
 
-def draw(source, walls, pg, screen):
+def draw(source, walls, pg, screen, ceiling_color, floor_color):
     source.draw()
     for wall in walls:
         wall.draw()
 
-    pg.draw.rect(screen, BLUE, (WIDTH, 0, WIDTH, int(HEIGHT/2)))
-    pg.draw.rect(screen, GREEN, (WIDTH, HEIGHT/2, WIDTH, int(HEIGHT/2)))
+    pg.draw.rect(screen, ceiling_color, (WIDTH, 0, WIDTH, int(HEIGHT/2)))
+    pg.draw.rect(screen, floor_color, (WIDTH, HEIGHT/2, WIDTH, int(HEIGHT/2)))
     return
 
 def map_value(value, sup):

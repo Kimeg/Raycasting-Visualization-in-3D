@@ -3,17 +3,23 @@ from static import *
 from point import Point
 
 import numpy as np
+import random
 
 class Ray:
-    def __init__(self, x, y, pg, screen, angle=0):
+    def __init__(self, x, y, ray_color, point_color, pg, screen, angle=0):
         self.angle = angle
         self.p1 = Point(x, y)
         self.p2 = Point(self.p1.x + (999 * np.cos(self.angle)), self.p1.y + (999* np.sin(self.angle)))
+        self.ray_color = ray_color 
+        self.point_color = point_color 
        	self.pg = pg 
        	self.screen = screen 
         self.hit = False
         return
-           
+
+    def __str__(self):
+        return '{0}_{1}__{2}_{3}'.format(str(self.p1.x),str(self.p1.y),str(self.p2.x),str(self.p2.y))   
+
     def move(self, x, y):
         self.p1.move(x, y)
         return
@@ -43,11 +49,13 @@ class Ray:
             return None
         return
     
-    def __str__(self):
-        return '{0}_{1}__{2}_{3}'.format(str(self.p1.x),str(self.p1.y),str(self.p2.x),str(self.p2.y))
+    def change_color(self, ray_color, point_color):
+        self.ray_color = ray_color
+        self.point_color = point_color
+        return
     
     def draw(self, ip):
         if (self.p1.x < WIDTH):
-            self.pg.draw.line(self.screen, WHITE, (self.p1.x, self.p1.y), ip, 1)
-        self.pg.draw.circle(self.screen, YELLOW, ip, 3)
+            self.pg.draw.line(self.screen, self.ray_color, (self.p1.x, self.p1.y), ip, 1)
+        self.pg.draw.circle(self.screen, self.point_color, ip, 3)
         return

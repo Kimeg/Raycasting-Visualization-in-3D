@@ -5,6 +5,7 @@ from point import Point
 from ray import Ray 
 
 import numpy as np
+import random
 import math
 
 class Source:
@@ -20,11 +21,20 @@ class Source:
         return
         
     def generate_rays(self):
+        self.ray_color = BLUE 
+        self.point_color = GREEN 
         for i in range(0, N):
             angle = i*FOV/N * np.pi/180
-            self.rays.append(Ray(self.pos.x, self.pos.y, self.pg, self.screen, angle))
+            self.rays.append(Ray(self.pos.x, self.pos.y, self.ray_color, self.point_color, self.pg, self.screen, angle))
         return
     
+    def change_ray_colors(self):
+        self.ray_color = random.choice(COLORS)
+        self.point_color = random.choice(COLORS)
+        for ray in self.rays:
+            ray.change_color(self.ray_color, self.point_color)
+        return
+
     def move(self, x, y):
         self.pos.move(x, y)
         

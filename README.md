@@ -9,9 +9,11 @@
 > [1] Computation of line-to-line interception point --> iteratively updates the interception points to derive the perception of "bright" and "dark" regions using line segments called "rays" emerging from the "light source". \
 > [2] Heuristic method used to map ray-casting phenomena into pseudo-3D perspective. 
 
-- Use mouse to move the light source around the screen (within the 2D section).
+- Use mouse to move the light source around the screen (within the 2D viewer).
 - Use left mouse button to switch between different view modes (pseudo-3D perspectives).
 - Use A or D keys to rotate the light source.
+- Use R key to reset the environment.
+- Use C key to change the color of rays and collision spots.
 - Use X key to quit.
 
 ![1](https://user-images.githubusercontent.com/26669345/146011467-e6681e62-68b4-455c-8acc-a1129a85a417.jpg)

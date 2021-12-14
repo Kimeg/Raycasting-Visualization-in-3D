@@ -29,7 +29,7 @@ def main():
     ''' ######### Rendering Pipeline ########## '''
     clicked = False
     while True:
-        draw(source, walls, pg, screen)
+        draw(source, walls, pg, screen, source.ray_color, source.point_color)
         
         source_angle = 0
         for event in pg.event.get():
@@ -59,6 +59,8 @@ def main():
             source = Source(int(WIDTH/2), int(HEIGHT/2), pg, screen)
             source.generate_rays()
             walls = wall_generator[WALL_TYPE](pg, screen)
+        elif keys[pg.K_c]:
+            source.change_ray_colors()
         elif keys[pg.K_x]:
             break
 
