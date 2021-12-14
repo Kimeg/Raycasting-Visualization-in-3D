@@ -48,6 +48,6 @@ class Ray:
     
     def draw(self, ip):
         if (self.p1.x < WIDTH):
-            self.pg.draw.line(self.screen, GREEN, (self.p1.x, self.p1.y), ip, 1)
-        self.pg.draw.circle(self.screen, WHITE, ip, 3)
+            self.pg.draw.line(self.screen, WHITE, (self.p1.x, self.p1.y), ip, 1)
+        self.pg.draw.circle(self.screen, YELLOW, ip, 3)
         return

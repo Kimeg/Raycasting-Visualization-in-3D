@@ -68,6 +68,7 @@ def main():
             ray.rotate(source_angle)
             closest = None
             record = 99999
+            color = None
 
             ''' Calculate the distance between the given ray and walls, store the closest one '''
             for wall in walls:
@@ -80,13 +81,14 @@ def main():
                     if d < record:
                         record = d
                         closest = ip
+                        color = wall.color
 
             ''' If there exists a wall, that is closest to the given ray, '''
             ''' draw the ray from the light source to the intersection point on the wall '''
             ''' Render this information on a pseudo-3D space '''
             if not closest == None:
                 ray.draw(closest)
-                source.draw3D(i, record)
+                source.draw3D(i, record, color)
                
         ''' Update the position of the light source ''' 
         source.move(mx, my)

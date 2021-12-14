@@ -47,7 +47,7 @@ class Source:
     ''' which affects how the rendering process looks like to our eyes. '''
     ''' parameters i and distance refers to the index of a ray and its distance to the nearest wall '''
     ''' '''
-    def draw3D(self, i, distance):
+    def draw3D(self, i, distance, color):
         if distance==0:
             return
 
@@ -64,10 +64,11 @@ class Source:
 
         ''' color value provides an effect in which wall's color being altered '''
         ''' depending on its distance to the light source '''
-        color = 255-map_value(distance)
+        #color = 255-map_value(distance)
+        color = tuple([v-map_value(distance, v) for v in color])
 
         try:
-            self.pg.draw.rect(self.screen, (color, color, color), (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
+            self.pg.draw.rect(self.screen, color, (WIDTH + (i*dx), int((HEIGHT-dy)/2), dx, dy))
         except:
             pass
         return
