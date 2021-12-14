@@ -13,3 +13,8 @@
 - Use left mouse button to switch between different view modes (pseudo-3D perspectives).
 - Use A or D keys to rotate the light source.
 - Use X key to quit.
+
+![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/1.jpg?raw=true)
+![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/2.jpg?raw=true)
+![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/3.jpg?raw=true)
+![alt text](https://github.com/Kimeg/Raycasting-Visualization-in-3D/blob/master/4.jpg?raw=true)
