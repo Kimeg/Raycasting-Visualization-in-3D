@@ -224,6 +224,8 @@ def main():
     }
     walls = wall_generator[wall_type]()
 
+
+    ''' ######### Rendering Pipeline ########## '''
     clicked = False
     while True:
         draw(source, walls)
