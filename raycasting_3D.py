@@ -13,7 +13,8 @@ import math
 
 def main():
     ''' The light source casting rays within specified field of view range ''' 
-    source = Source(int(WIDTH/2), int(HEIGHT/2), pg, screen)
+    fov = FOV
+    source = Source(int(WIDTH/2), int(HEIGHT/2), fov, pg, screen)
     source.generate_rays()
 
     ''' Generate walls which "blocks" the light rays thus providing what we perceive as light & shade effects '''
@@ -49,6 +50,8 @@ def main():
 
         ''' Press A or D to rotate the light source '''
         ''' Press R to reset the environment '''
+        ''' Press C to change the color of rays and collision spots '''
+        ''' Press Z to tune field of view angle '''
         ''' Press X to quit '''
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
@@ -56,11 +59,17 @@ def main():
         elif keys[pg.K_d]:
             source_angle = ROTATION_SPEED
         elif keys[pg.K_r]:
-            source = Source(int(WIDTH/2), int(HEIGHT/2), pg, screen)
+            source = Source(int(WIDTH/2), int(HEIGHT/2), fov, pg, screen)
             source.generate_rays()
             walls = wall_generator[WALL_TYPE](pg, screen)
         elif keys[pg.K_c]:
             source.change_ray_colors()
+        elif keys[pg.K_z]:
+            fov += 5 
+            if fov > 360:
+                fov = FOV
+            source.fov = fov
+            source.generate_rays()
         elif keys[pg.K_x]:
             break
 

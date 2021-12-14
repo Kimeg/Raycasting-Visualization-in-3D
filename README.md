@@ -14,6 +14,7 @@
 - Use A or D keys to rotate the light source.
 - Use R key to reset the environment.
 - Use C key to change the color of rays and collision spots.
+- Use Z key to tune field of view angle.
 - Use X key to quit.
 
 ![1](https://user-images.githubusercontent.com/26669345/146011467-e6681e62-68b4-455c-8acc-a1129a85a417.jpg)

@@ -9,22 +9,23 @@ import random
 import math
 
 class Source:
-    def __init__(self, x, y, pg, screen):
+    def __init__(self, x, y, fov, pg, screen):
         self.pos = Point(x, y)
         self.angle = np.random.randint(0, 360)
         self.view_mode = 0 
         self.pg = pg
         self.screen = screen 
-
-        ''' list to store all light ray objects emerging from light source '''
-        self.rays = []
+        self.fov = fov
         return
         
     def generate_rays(self):
+        ''' list to store all light ray objects emerging from light source '''
+        self.rays = []
+
         self.ray_color = BLUE 
         self.point_color = GREEN 
         for i in range(0, N):
-            angle = i*FOV/N * np.pi/180
+            angle = i*self.fov/N * np.pi/180
             self.rays.append(Ray(self.pos.x, self.pos.y, self.ray_color, self.point_color, self.pg, self.screen, angle))
         return
     
@@ -68,7 +69,7 @@ class Source:
         if VIEW_MODES[self.view_mode] == 'tangent':
             dy = int(DISTORTION_ANGLE/distance)
         elif VIEW_MODES[self.view_mode] == 'cosine':
-            dy = int((N*HEIGHT/distance)*math.cos(abs(i*(FOV/N)-FOV)*math.pi/180))
+            dy = int((N*HEIGHT/distance)*math.cos(abs(i*(self.fov/N)-self.fov)*math.pi/180))
         elif VIEW_MODES[self.view_mode] == 'fisheye':
             dy = int(HEIGHT-distance)
 
